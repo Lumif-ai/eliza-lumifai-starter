@@ -1,5 +1,11 @@
 # Eliza Lumifai Starter Kit
 
+## Testing with the Lumifai plugin and network locally
+
+You can download and link the Lumifai Eliza plugin by cloning [this repo](https://github.com/Lumif-ai/plugin-eliza-lumifai)
+
+To run the network locally, you can clone [this repo](https://github.com/Lumif-ai/network-workspace) and follow the instructions
+
 ## Edit the character files
 
 Open `src/character.ts` to modify the default character. Uncomment and edit.
