@@ -1,4 +1,4 @@
-# Eliza
+# Eliza Lumifai Starter Kit
 
 ## Edit the character files
 
@@ -10,13 +10,14 @@ To load custom characters instead:
 - Use `pnpm start --characters="path/to/your/character.json"`
 - Multiple character files can be loaded simultaneously
 
-### Add clients
+### Add Lumifai client
 ```
 # in character.ts
-clients: [Clients.TWITTER, Clients.DISCORD],
+import lumifaiPlugin from "@elizaos-plugins/plugin-lumifai";
+plugins: [lumifaiPlugin],
 
 # in character.json
-clients: ["twitter", "discord"]
+plugins: ["@elizaos-plugins/plugin-lumifai"]
 ```
 
 ## Duplicate the .env.example template
@@ -45,50 +46,3 @@ TWITTER_EMAIL="your@email.com"
 pnpm i && pnpm start
 ```
 Note: this requires node to be at least version 22 when you install packages and run the agent.
-
-## Run with Docker
-
-### Build and run Docker Compose (For x86_64 architecture)
-
-#### Edit the docker-compose.yaml file with your environment variables
-
-```yaml
-services:
-    eliza:
-        environment:
-            - OPENROUTER_API_KEY=blahdeeblahblahblah
-```
-
-#### Run the image
-
-```bash
-docker compose up
-```
-
-### Build the image with Mac M-Series or aarch64
-
-Make sure docker is running.
-
-```bash
-# The --load flag ensures the built image is available locally
-docker buildx build --platform linux/amd64 -t eliza-starter:v1 --load .
-```
-
-#### Edit the docker-compose-image.yaml file with your environment variables
-
-```yaml
-services:
-    eliza:
-        environment:
-            - OPENROUTER_API_KEY=blahdeeblahblahblah
-```
-
-#### Run the image
-
-```bash
-docker compose -f docker-compose-image.yaml up
-```
-
-# Deploy with Railway
-
-[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/template/aW47_j)
