@@ -1,4 +1,5 @@
 import { DirectClient } from "@elizaos/client-direct";
+import { LumifaiClientManager } from "@elizaos-plugins/plugin-lumifai";
 import {
   AgentRuntime,
   elizaLogger,
@@ -16,7 +17,7 @@ import { fileURLToPath } from "url";
 import { initializeDbCache } from "./cache/index.ts";
 import { character } from "./character.ts";
 import { startChat } from "./chat/index.ts";
-import { initializeClients } from "./clients/index.ts";
+// import { initializeClients } from "./clients/index.ts";
 import {
   getTokenForProvider,
   loadCharacters,
@@ -39,7 +40,7 @@ export function createAgent(
   character: Character,
   db: any,
   cache: any,
-  token: string
+  token: string,
 ) {
   elizaLogger.success(
     elizaLogger.successesTitle,
@@ -68,7 +69,11 @@ export function createAgent(
   });
 }
 
-async function startAgent(character: Character, directClient: DirectClient) {
+async function startAgent(
+  character: Character,
+  directClient: DirectClient,
+  lumifaiClient: LumifaiClientManager,
+) {
   try {
     character.id ??= stringToUuid(character.name);
     character.username ??= character.name;
@@ -89,9 +94,10 @@ async function startAgent(character: Character, directClient: DirectClient) {
 
     await runtime.initialize();
 
-    runtime.clients = await initializeClients(character, runtime);
+    // runtime.clients = await initializeClients(character, runtime);
 
     directClient.registerAgent(runtime);
+    lumifaiClient.initialize(runtime);
 
     // report to console
     elizaLogger.debug(`Started ${character.name} as ${runtime.agentId}`);
@@ -128,6 +134,7 @@ const checkPortAvailable = (port: number): Promise<boolean> => {
 
 const startAgents = async () => {
   const directClient = new DirectClient();
+  const lumifaiClientManager = new LumifaiClientManager();
   let serverPort = parseInt(settings.SERVER_PORT || "3000");
   const args = parseArguments();
 
@@ -141,7 +148,11 @@ const startAgents = async () => {
   console.log("characters", characters);
   try {
     for (const character of characters) {
-      await startAgent(character, directClient as DirectClient);
+      await startAgent(
+        character,
+        directClient as DirectClient,
+        lumifaiClientManager,
+      );
     }
   } catch (error) {
     elizaLogger.error("Error starting agents:", error);
@@ -153,23 +164,23 @@ const startAgents = async () => {
   }
 
   // upload some agent functionality into directClient
-  directClient.startAgent = async (character: Character) => {
-    // wrap it so we don't have to inject directClient later
-    return startAgent(character, directClient);
-  };
+  // directClient.startAgent = async (character: Character) => {
+  //   // wrap it so we don't have to inject directClient later
+  //   return startAgent(character, directClient, lumifaiClientManager);
+  // };
 
-  directClient.start(serverPort);
+  // directClient.start(serverPort);
 
   if (serverPort !== parseInt(settings.SERVER_PORT || "3000")) {
     elizaLogger.log(`Server started on alternate port ${serverPort}`);
   }
 
-  const isDaemonProcess = process.env.DAEMON_PROCESS === "true";
-  if(!isDaemonProcess) {
-    elizaLogger.log("Chat started. Type 'exit' to quit.");
-    const chat = startChat(characters);
-    chat();
-  }
+  // const isDaemonProcess = process.env.DAEMON_PROCESS === "true";
+  // if (!isDaemonProcess) {
+  //   elizaLogger.log("Chat started. Type 'exit' to quit.");
+  //   const chat = startChat(characters);
+  //   chat();
+  // }
 };
 
 startAgents().catch((error) => {

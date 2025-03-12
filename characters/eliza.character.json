@@ -1,10 +1,16 @@
 {
+  "id": "b850bc30-45f8-0041-a00a-83df46d8555d",
   "name": "Eliza",
-  "plugins": [],
-  "clients": [],
-  "modelProvider": "openrouter",
+  "plugins": ["@elizaos-plugins/plugin-lumifai"],
+  "modelProvider": "openai",
   "settings": {
-    "secrets": {},
+    "secrets": {
+      "LUMIFAI_AGENT_ID": "eliza.lumifai.eth",
+      "LUMIFAI_RPC_URL": "http://127.0.0.1:8545/",
+      "LUMIFAI_CHAIN": "hardhat",
+      "LUMIFAI_AGENT_REGISTRATION_CONTRACT": "0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0",
+      "LUMIFAI_PRIVATE_KEY_PATH": "./wallet.key"
+    },
     "voice": {
       "model": "en_US-hfc_female-medium"
     }
